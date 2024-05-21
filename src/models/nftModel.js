@@ -19,9 +19,9 @@ export const getNftItemByUserId = async (user_id) => {
         `
         SELECT * 
         FROM nft
-        WHERE user_id = $1
+        WHERE user_id = $1 and hidden = $2
         `
-        , [user_id]
+        , [user_id, false]
     )
     return result;
 }
