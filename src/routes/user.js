@@ -6,7 +6,7 @@ import {
     updateUserInfo,
     getTotalLikes,
     getAllNfts,
-    getUserBio
+    getUserBioㄒ
 } from "../controllers/user.js";
 import express from "express";
 import authJWT from "../middleware/authAPI.js"
