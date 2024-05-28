@@ -8,7 +8,8 @@ import {
     getTotalLikes,
     getAllMyNfts,
     getUserBio,
-    getALLUserWithNFT
+    getALLUserWithNFT,
+    getMyRank
 } from "../controllers/user.js";
 import express from "express";
 import authJWT from "../middleware/authAPI.js"
@@ -22,7 +23,7 @@ router.get("/autologin", authJWT, getUserByJwt)
 router.get("/likes", authJWT, getTotalLikes);
 router.get("/allnfts", authJWT, getAllMyNfts);
 router.get("/allusernfts", getALLUserWithNFT);
-
+router.get("/rank", authJWT, getMyRank)
 
 //router.post("/", registerUser);
 router.post("/login", userLogin);
@@ -32,6 +33,7 @@ router.put("/bio", authJWT, updateUserBio);
 router.put("/info", authJWT, updateUserInfo);
 router.put("/imgname", authJWT, upload.single("image"), uploadUserImage, updateImgAndName);
 router.get("/:userId", authJWT, getUserInfo);
+
 
 export default router;
 

@@ -4,7 +4,8 @@ import {
     updatePasswordAndUsername,
     updateImageAndUsername, 
     updateBio,
-    getUserWithNFT
+    getUserWithNFT,
+    getRank
 } from '../models/userModel.js';
 import { getTotalLikesByUserId, getAllNftsByUserId, getAllMyNftsByUserId } from '../models/nftModel.js';
 import dotenv from "dotenv";
@@ -173,6 +174,16 @@ export const getAllMyNfts = async (req, res) => {
         return res.status(200).json(result);
     }catch(error){
         return res.status(500).json({ message: error.message});
+    }
+}
+
+export const getMyRank = async(req, res) => {
+    const {userId} = req.user
+    try{
+        const result = await getRank(userId)
+        return res.status(200).json(result)
+    }catch(error){
+        return res.status(500).json({ message: error })
     }
 }
 

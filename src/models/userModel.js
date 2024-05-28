@@ -70,6 +70,16 @@ export const updateBio = async (user_id, user_bio) => {
     return result;
 }
 
+export const getRank = async(user_id) => {
+    return await db.one(
+        `
+        select ranking.rank 
+        from (SELECT user_id, COALESCE(SUM(likes),0) AS total_likes,Dense_rank() OVER (
+            ORDER BY COALESCE(SUM(likes),0) desc ) as rank FROM nft GROUP BY user_id) as ranking
+        where ranking.user_id = $1
+        `, [user_id]
+    )
+}
 
 //更改頭像
 export const updateImage = (user_id, image) => {
