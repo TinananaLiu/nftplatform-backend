@@ -77,17 +77,43 @@ export const updateImage = (user_id, image) => {
 }
 
 //更新token數量
-export const updateToken = async (user_id, token_name) => {
+export const updateToken = async (user_id, token_name, amount) => {
+
     const result = await db.any(
         `
         update user_account
-        set $2=$2 + 1
+        set ${token_name} = ${token_name} + $2
         where user_id=$1
         RETURNING *;
         `
-        , [user_id, token_name]
+        , [user_id, amount]
     );
     return result;
 }
 
-//少一個jwt欄位
+
+
+export const getUserWithNFT = async () => {
+    const result = await db.any(
+        `select ua.*, n2.* from user_account as ua
+        JOIN (Select n1.user_id, max(n1.image) as cover from nft as n1 where n1.hidden=false group by (n1.user_id)) as n2 on ua.user_id = n2.user_id
+        where ua.user_id  in (select n3.user_id from nft as n3 where hidden = $1) `
+        ,[false]
+    );
+    return result;
+
+}
+
+//更新image和user_name
+export const updateImageAndUsername = async (user_id, image, username) => {
+    const result = await db.any(
+        `
+        UPDATE user_account
+        SET image=$1, user_name=$2
+        WHERE user_id=$3
+        RETURNING *;
+        `
+        , [image, username, user_id]
+    );
+    return result;
+}
