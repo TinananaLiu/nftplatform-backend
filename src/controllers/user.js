@@ -1,11 +1,14 @@
 import { 
     getUserByUserId, 
     getUserByEmail,
-    createUser, 
-    updatePasswordAndUsername, 
-    updateBio
+    updatePasswordAndUsername,
+    updateImageAndUsername, 
+    updateBio,
+    getUserWithNFT,
+    getRank,
+    updateUsername
 } from '../models/userModel.js';
-import { getTotalLikesByUserId, getAllNftsByUserId } from '../models/nftModel.js';
+import { getTotalLikesByUserId, getAllNftsByUserId, getAllMyNftsByUserId } from '../models/nftModel.js';
 import dotenv from "dotenv";
 import pkg from "jsonwebtoken";
 
@@ -66,6 +69,7 @@ export const userLogin = async (req, res) => {
     }
 }
 
+//這個好像用不到
 export const getUserBio = async (req, res) => {
     const {userId} = req.user;
 
@@ -105,8 +109,6 @@ export const updateUserBio = async (req, res) => {
 }
 
 export const updateUserInfo = async (req, res) => {
-
-
     const {userId} = req.user;
     const {oldPassword, newPassword, userName} = req.body;
 
@@ -134,6 +136,32 @@ export const updateUserInfo = async (req, res) => {
     }
 }
 
+export const updateImgAndName = async (req, res) => {
+    const {userId} = req.user;
+    const {userName} = req.body;
+    const image = req.filename
+    console.log(image)
+    try{
+        //判斷有無該user存在
+        const users = await getUserByUserId(userId);
+        if(users.length === 0){
+            return res.status(401).json({message: 'Not existing user'})
+        }
+        if(image){
+            const result = await updateImageAndUsername(userId, image, userName)
+            return res.status(200).json(result);
+        }else{
+            const result = await updateUsername(userId, userName)
+            return res.status(200).json(result);
+        }
+    }
+    catch(error){
+        return res.status(500).json({ message: error.message});
+    }
+}
+
+
+
 export const getTotalLikes = async (req, res) => {
     const {userId} = req.user;
     try{
@@ -144,19 +172,28 @@ export const getTotalLikes = async (req, res) => {
     }
 }
 
-export const getAllNfts = async (req, res) => {
-    const {nftId} = req.body;
+export const getAllMyNfts = async (req, res) => {
+    const {userId} = req.user;
     try{
-        const result = await getAllNftsByUserId(nftId);
+        const result = await getAllMyNftsByUserId(userId);
         return res.status(200).json(result);
     }catch(error){
         return res.status(500).json({ message: error.message});
     }
 }
 
+export const getMyRank = async(req, res) => {
+    const {userId} = req.user
+    try{
+        const result = await getRank(userId)
+        return res.status(200).json(result)
+    }catch(error){
+        return res.status(500).json({ message: error })
+    }
+}
+
 export const getUserByJwt = async (req, res) => {
     const { userId } = req.user;
-
     try {
         const users = await getUserByUserId(userId);
         if (users.length === 0){
@@ -164,16 +201,26 @@ export const getUserByJwt = async (req, res) => {
         }
         const user = users[0]
 
-        const {user_name, image} = user
+        const {user_id, user_name, image} = user
 
         return res.status(200).json({
+            user_id,
             user_name,
             image
         })
-    } catch (e) {
+    } catch (error) {
         return res.status(500).json({ message: error.message});
     }
     
+}
+
+export const getALLUserWithNFT = async (req, res) => {
+    try{
+        const result = await getUserWithNFT();
+        return res.status(200).json(result);
+    }catch(error){
+        return res.status(500).json({ message: error.message});
+    }
 }
 
 
@@ -186,20 +233,20 @@ export const getUserByJwt = async (req, res) => {
 
 
 // ------------------------------------------------------------------------------------------------
-export const registerUser = async (req, res) => {
-    const {userName, email, password} = req.body;
+// export const registerUser = async (req, res) => {
+//     const {userName, email, password} = req.body;
 
-    if(!userName||!email||!password){
-        return res.status(404).json({ message: "Username, email and password can not be empty"}); 
-    }
+//     if(!userName||!email||!password){
+//         return res.status(404).json({ message: "Username, email and password can not be empty"}); 
+//     }
 
-    try{
-        const result = await createUser({userName,email,password});
-        if (result === 0){
-            return res.status(404).json({ message: "No user found"});
-        }
-        return res.status(200).json(result); 
-    }catch(error){
-        return res.status(500).json({ message: error.message});
-    }
-}
+//     try{
+//         const result = await createUser({userName,email,password});
+//         if (result === 0){
+//             return res.status(404).json({ message: "No user found"});
+//         }
+//         return res.status(200).json(result); 
+//     }catch(error){
+//         return res.status(500).json({ message: error.message});
+//     }
+// }

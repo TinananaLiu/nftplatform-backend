@@ -6,6 +6,7 @@ dotenv.config();
 
 function authJWT(req, res, next) {
   const token = req.headers.authorization;
+  console.log(token)
   const tmp = token.split(' ')[1]  // for postman API calls
 
 
