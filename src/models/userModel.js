@@ -132,8 +132,8 @@ export const updateUsername = async (user_id, username) => {
     const result = await db.any(
         `
         UPDATE user_account
-        SET user_name=$2
-        WHERE user_id=$3
+        SET user_name=$1
+        WHERE user_id=$2
         RETURNING *;
         `
         , [username, user_id]
