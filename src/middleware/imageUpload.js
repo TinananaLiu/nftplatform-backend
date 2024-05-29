@@ -14,7 +14,6 @@ const storage = new Storage({
 export function uploadUserImage (req, res, next){
     const bucket = storage.bucket("personachain-user-image");
     const file = req.file;
-
     //If no file
     if(!file){
         req.filename = null;

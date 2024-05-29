@@ -5,7 +5,8 @@ import {
     updateImageAndUsername, 
     updateBio,
     getUserWithNFT,
-    getRank
+    getRank,
+    updateUsername
 } from '../models/userModel.js';
 import { getTotalLikesByUserId, getAllNftsByUserId, getAllMyNftsByUserId } from '../models/nftModel.js';
 import dotenv from "dotenv";
@@ -146,9 +147,13 @@ export const updateImgAndName = async (req, res) => {
         if(users.length === 0){
             return res.status(401).json({message: 'Not existing user'})
         }
-
-        const result = await updateImageAndUsername(userId, image, userName)
-        return res.status(200).json(result);
+        if(image){
+            const result = await updateImageAndUsername(userId, image, userName)
+            return res.status(200).json(result);
+        }else{
+            const result = await updateUsername(userId, userName)
+            return res.status(200).json(result);
+        }
     }
     catch(error){
         return res.status(500).json({ message: error.message});

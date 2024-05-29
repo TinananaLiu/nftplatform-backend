@@ -127,3 +127,16 @@ export const updateImageAndUsername = async (user_id, image, username) => {
     );
     return result;
 }
+
+export const updateUsername = async (user_id, username) => {
+    const result = await db.any(
+        `
+        UPDATE user_account
+        SET user_name=$2
+        WHERE user_id=$3
+        RETURNING *;
+        `
+        , [username, user_id]
+    );
+    return result;
+}
