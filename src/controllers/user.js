@@ -90,9 +90,9 @@ export const updateUserBio = async (req, res) => {
     const {userBio} = req.body;
     try{
         
-        if (userBio.toString().length > 30 ){
-            return res.status(400).json({message: 'Bio content too long'});
-        };
+        // if (userBio.toString().length > 30 ){
+        //     return res.status(400).json({message: 'Bio content too long'});
+        // };
 
         //判斷有無該user存在
         const users = await getUserByUserId(userId);
