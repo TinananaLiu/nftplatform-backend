@@ -71,7 +71,7 @@ export const updateBio = async (user_id, user_bio) => {
 }
 
 export const getRank = async(user_id) => {
-    return await db.one(
+    return await db.oneOrNone(
         `
         select ranking.rank 
         from (SELECT user_id, COALESCE(SUM(likes),0) AS total_likes,Dense_rank() OVER (
